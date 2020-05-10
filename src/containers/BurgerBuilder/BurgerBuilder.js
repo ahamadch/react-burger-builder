@@ -9,14 +9,6 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import axios from '../../axios-orders';
 import * as actionTypes from '../../store/actions';
-
-const INGREDIENT_PRICES = {
-  meat: 20,
-  bacon: 10,
-  cheese: 7.5,
-  salad: 5
-};
-
 class BurgerBuilder extends Component {
   state = {
     totalPrice: 0,
@@ -46,43 +38,6 @@ class BurgerBuilder extends Component {
         return sum + el;
       }, 0);
     this.setState({purchasable: sum > 0});
-  }
-
-  addIngredientHandler = type => {
-    const oldCount = this.state.ingredients[type];
-    const updatedCount = oldCount + 1;
-    const updatedIngredients = {...this.state.ingredients};
-    updatedIngredients[type] = updatedCount;
-
-    const priceAddition = INGREDIENT_PRICES[type];
-    const oldPrice = this.state.totalPrice;
-    const newPrice = oldPrice + priceAddition;
-
-    this.setState({
-      ingredients: updatedIngredients,
-      totalPrice: newPrice
-    });
-    this.updatePurchaseState(updatedIngredients);
-  }
-
-  removeIngredientHandler = type => {
-    const oldCount = this.state.ingredients[type];
-    if(oldCount <= 0) {
-      return;
-    }
-    const updatedCount = oldCount - 1;
-    const updatedIngredients = {...this.state.ingredients};
-    updatedIngredients[type] = updatedCount;
-
-    const priceDeduction = INGREDIENT_PRICES[type];
-    const oldPrice = this.state.totalPrice;
-    const newPrice = oldPrice - priceDeduction;
-
-    this.setState({
-      ingredients: updatedIngredients,
-      totalPrice: newPrice
-    });
-    this.updatePurchaseState(updatedIngredients);
   }
 
   purchaseHandler = () => {
@@ -127,14 +82,14 @@ class BurgerBuilder extends Component {
             disabled={disabledInfo}
             purchasable={this.state.purchasable}
             ordered={this.purchaseHandler}
-            price={this.state.totalPrice}/>
+            price={this.props.tPrice}/>
         </Auxiliary>
       );
 
       orderSummary = <OrderSummary
                         purchaseCancelled={this.purchaseCancelHandler}
                         purchaseContinued={this.purchaseContinueHandler}
-                        price={this.state.totalPrice}
+                        price={this.props.tPrice}
                         ingredients={this.props.ings}
                       />;
     }
