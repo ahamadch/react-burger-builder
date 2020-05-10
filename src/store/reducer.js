@@ -21,7 +21,7 @@ const reducer = (state = initialState, action) => {
         }
       };
 
-    case actionTypes.ADD_INGREDIENT:
+    case actionTypes.REMOVE_INGREDIENT:
       return {
         ...state,
         ingredients: {
