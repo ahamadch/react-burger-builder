@@ -1,4 +1,4 @@
-import * as actionTypes from './actionTypes';
+import * as actionTypes from '../actions/actionTypes';
 
 const initialState = {
   orders: [],
@@ -6,7 +6,7 @@ const initialState = {
 }
 
 const reducer  = (state = initialState, action) => {
-  switch(actionTypes.type) {
+  switch(action.type) {
     case actionTypes.PURCHASE_BURGER_START:
       return {
         ...state,
@@ -35,3 +35,5 @@ const reducer  = (state = initialState, action) => {
         return state;
   }
 };
+
+export default reducer;
