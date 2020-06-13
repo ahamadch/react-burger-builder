@@ -1,45 +1,39 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Auxiliary from '../Auxiliary/Auxiliary';
 import Modal from '../../components/UI/Modal/Modal';
 
 const withErrorHandler = (WrapperComponent, axios) => {
-  return class extends Component {
-    state = {
-      error: null
+  return props => {
+    const [error, setError] = useState(null);
+
+    const reqInterceptor = axios.interceptors.request.use(req => {
+      setError(null);
+      return req;
+    });
+
+    const resInterceptor = axios.interceptors.response.use(res => res, err => {
+      setError(err);
+    });
+
+    useEffect(() => {
+      axios.interceptors.request.eject(reqInterceptor);
+      axios.interceptors.response.eject(resInterceptor);
+    }, [reqInterceptor, resInterceptor]);
+
+    const errorConfirmedHandler = () => {
+      setError(null);
     }
 
-    componentDidMount() {
-      this.reqInterceptor = axios.interceptors.request.use(req => {
-        this.setState({error: null});
-        return req;
-      });
-
-      this.resInterceptor = axios.interceptors.response.use(res => res, error => {
-        this.setState({error: error});
-      });
-    }
-
-    componentWillUnmount() {
-      axios.interceptors.request.eject(this.reqInterceptor);
-      axios.interceptors.response.eject(this.resInterceptor);
-    }
-
-    errorConfirmedHandler = () => {
-      this.setState({error: null});
-    }
-
-    render() {
-      return (
-        <Auxiliary>
-          <Modal
-            show={this.state.error}
-            modalClosed={this.errorConfirmedHandler}>
-            {this.state.error ? this.state.error.message : null}
-          </Modal>
-          <WrapperComponent {...this.props} />
-        </Auxiliary>
-      );
-    }
+    return (
+      <Auxiliary>
+        <Modal
+          show={error}
+          modalClosed={errorConfirmedHandler}>
+          {error ? error.message : null}
+        </Modal>
+        <WrapperComponent {...props} />
+      </Auxiliary>
+    );
   }
 }
 
